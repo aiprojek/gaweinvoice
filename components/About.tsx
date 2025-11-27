@@ -125,9 +125,42 @@ const About: React.FC = () => {
                 <FeatureCard icon="bi-phone-fill" title={t('featurePwaTitle')} description={t('featurePwaDesc')} />
               </div>
             </div>
-            <div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">{t('techStack')}</h3>
-              <p className="text-gray-600">{t('techStackDesc')}</p>
+            <div className="pt-8 mt-8 border-t">
+              <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">{t('supportProject')}</h3>
+              <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-8">
+                <a 
+                  href="https://lynk.id/aiprojek/s/bvBJvdA"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center w-full sm:w-auto px-5 py-2.5 bg-yellow-400 text-yellow-900 font-semibold rounded-lg shadow-md hover:bg-yellow-500 transition duration-150 transform hover:scale-105"
+                >
+                  <i className="bi bi-cup-hot-fill mr-2"></i> {t('buyMeACoffee')}
+                </a>
+                <a 
+                  href="https://github.com/aiprojek/gaweinvoice"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center w-full sm:w-auto px-5 py-2.5 bg-gray-800 text-white font-semibold rounded-lg shadow-md hover:bg-gray-900 transition duration-150 transform hover:scale-105"
+                >
+                  <i className="bi bi-github mr-2"></i> {t('viewOnGithub')}
+                </a>
+                <a 
+                  href="https://t.me/aiprojek_community/32"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center w-full sm:w-auto px-5 py-2.5 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition duration-150 transform hover:scale-105"
+                >
+                  <i className="bi bi-telegram mr-2"></i> {t('joinDiscussion')}
+                </a>
+              </div>
+              <div className="text-center text-sm text-gray-500 space-y-1">
+                <p>
+                  {t('developer')}: <a href="https://aiprojek01.my.id" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">AI Projek</a>
+                </p>
+                <p>
+                  {t('license')}: <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">{t('gnuGpl3')}</a>
+                </p>
+              </div>
             </div>
           </section>
         )}

@@ -1,6 +1,5 @@
 
 
-
 import React, { useState, useEffect, useRef } from 'react';
 import type { InvoiceStatus, QuoteStatus } from './types';
 import InvoiceList from './components/InvoiceList';
@@ -157,8 +156,8 @@ const App: React.FC = () => {
       case 'clients': return <ClientList onSave={saveClient} onDelete={removeClient} />;
       case 'products': return <ProductList onSave={saveProduct} onDelete={removeProduct} settings={settings} />;
       case 'settings': return <SettingsView settings={settings} onSave={updateSettings} onRestore={refetchAll} />;
-      case 'dashboard': return <Dashboard clients={clients!} settings={settings} />;
-      case 'reports': return <Reports clients={clients!} products={products!} settings={settings} />;
+      case 'dashboard': return <Dashboard invoices={[]} clients={clients!} settings={settings} />;
+      case 'reports': return <Reports invoices={[]} clients={clients!} products={products!} settings={settings} />;
       case 'about': return <About />;
       case 'list': default: return <InvoiceList onView={(id) => handleNavigate('detail', id)} onEdit={(id) => handleNavigate('form', id)} onDelete={removeInvoice} onCreate={() => handleNavigate('form')} onUpdateStatus={updateInvoiceStatus} onDuplicate={duplicateInvoice} onBulkDelete={bulkDeleteInvoices} onBulkUpdateStatus={bulkUpdateInvoiceStatus} settings={settings} />;
     }

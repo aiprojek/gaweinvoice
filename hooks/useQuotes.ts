@@ -29,12 +29,12 @@ export const useQuotes = (
 
   const saveQuote = async (quote: Omit<Quote, 'id'>, id?: number) => {
     await (id ? updateQuote(id, quote) : addQuote(quote));
-    addToast(id ? 'Quote updated' : 'Quote created', 'success');
+    addToast(t(id ? 'quoteUpdated' : 'quoteAdded'), 'success');
   };
 
   const removeQuote = async (id: number) => {
     await deleteQuote(id);
-    addToast('Quote deleted', 'success');
+    addToast(t('quoteDeleted'), 'success');
   };
 
   const updateQuoteStatus = async (id: number, status: QuoteStatus) => {

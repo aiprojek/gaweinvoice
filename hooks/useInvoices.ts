@@ -28,12 +28,12 @@ export const useInvoices = (
 
   const saveInvoice = async (invoice: Omit<Invoice, 'id'>, id?: number) => {
     await (id ? updateInvoice(id, invoice) : addInvoice(invoice));
-    addToast(id ? 'Invoice updated successfully' : 'Invoice created successfully', 'success');
+    addToast(t(id ? 'invoiceUpdated' : 'invoiceAdded'), 'success');
   };
 
   const removeInvoice = async (id: number) => {
     await deleteInvoice(id);
-    addToast('Invoice deleted successfully', 'success');
+    addToast(t('invoiceDeleted'), 'success');
   };
   
   const updateInvoiceStatus = async (id: number, status: InvoiceStatus) => {

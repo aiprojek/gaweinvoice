@@ -119,7 +119,7 @@ export const useRecurringInvoices = (
         }
       } catch (err) {
         console.error("Error processing recurring invoices:", err);
-        addToast('Failed to process recurring invoices', 'error');
+        addToast(t('recurringFailed'), 'error');
       }
   }, [settings, onInvoicesGenerated, addToast, t]);
 

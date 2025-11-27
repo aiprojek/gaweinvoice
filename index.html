@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-ur" />
+    <link rel="icon" type="image/svg+xml" href="logo.svg" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#4f46e5" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GaweInvoice - Invoice Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" crossorigin="anonymous">
+    <style>
+      :root {
+        --template-accent-color: #4f46e5;
+      }
+
+      /* --- Base Styles for All Templates --- */
+      .template-modern .totals-summary,
+      .template-elegant .totals-summary {
+          width: 100%;
+      }
+      @media (min-width: 768px) {
+          .template-elegant .totals-summary {
+              width: 50%;
+          }
+      }
+
+
+      /* --- Classic Template --- */
+      .template-classic .invoice-header {
+          border-bottom: 1px solid #e5e7eb; /* gray-200 */
+      }
+      .template-classic h1 {
+          color: #1f2937; /* gray-800 */
+      }
+      .template-classic .company-name {
+          color: #374151; /* gray-700 */
+      }
+      .template-classic .company-details {
+          color: #6b7280; /* gray-500 */
+      }
+      .template-classic table thead {
+          background-color: #f9fafb; /* gray-50 */
+      }
+      .template-classic .invoice-header-row {
+          border-bottom: 2px solid #e5e7eb; /* gray-200 */
+      }
+      .template-classic table thead th {
+          color: #4b5563; /* gray-600 */
+      }
+      .template-classic .total-due-section {
+          border-top: 2px solid #e5e7eb; /* gray-200 */
+      }
+      .template-classic .total-due-label,
+      .template-classic .total-due-amount {
+          color: #4f46e5; /* indigo-600 */
+      }
+
+
+      /* --- Modern Template --- */
+      .template-modern {
+          font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+      }
+      .template-modern .invoice-header {
+          border-bottom: 4px solid #4f46e5; /* indigo-600 */
+      }
+      .template-modern h1 {
+          color: #4f46e5; /* indigo-600 */
+          letter-spacing: 0.1em;
+      }
+      .template-modern .company-name {
+          color: #374151; /* gray-700 */
+      }
+      .template-modern .company-details {
+          color: #6b7280; /* gray-500 */
+      }
+      .template-modern table thead {
+          background-color: #4f46e5; /* indigo-600 */
+      }
+      .template-modern table thead th {
+          color: #ffffff;
+          font-weight: 500;
+          letter-spacing: 0.05em;
+      }
+      .template-modern table tbody tr:last-child {
+          border-bottom: 2px solid #e5e7eb; /* gray-200 */
+      }
+      .template-modern .totals-summary {
+          background-color: #eef2ff; /* indigo-50 */
+          padding: 1.5rem;
+          border-radius: 0.5rem;
+      }
+      .template-modern .total-due-section {
+          border: none;
+          margin-top: 0;
+          padding-top: 0.75rem; /* pt-3 */
+          border-top: 1px solid #c7d2fe; /* indigo-200 */
+      }
+      .template-modern .total-due-label,
+      .template-modern .total-due-amount {
+          color: #4f46e5; /* indigo-600 */
+      }
+
+
+      /* --- Elegant Template --- */
+      .template-elegant {
+          font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+      }
+      .template-elegant .invoice-header {
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          border-bottom: 1px solid #d1d5db; /* gray-300 */
+      }
+      .template-elegant .invoice-header > div:last-child {
+          text-align: center;
+          margin-top: 1rem;
+      }
+      .template-elegant h1 {
+          font-weight: 300;
+          letter-spacing: 0.2em;
+          color: #111827; /* gray-900 */
+      }
+      .template-elegant .company-name {
+          color: #374151; /* gray-700 */
+          font-size: 1.125rem; /* text-lg */
+      }
+      .template-elegant .company-details {
+          font-size: 0.875rem; /* text-sm */
+          color: #6b7280; /* gray-500 */
+      }
+      .template-elegant table {
+          border-collapse: collapse;
+      }
+      .template-elegant table th,
+      .template-elegant table td {
+          border-bottom: 1px solid #e5e7eb; /* gray-200 */
+      }
+      .template-elegant table thead {
+          background-color: #ffffff;
+      }
+      .template-elegant .invoice-header-row {
+          border-bottom: 2px solid #111827; /* gray-900 */
+      }
+      .template-elegant table thead th {
+          font-weight: 400;
+          text-transform: none;
+          letter-spacing: 0.05em;
+          color: #374151; /* gray-700 */
+      }
+      .template-elegant .total-due-section {
+          border-top: 2px solid #111827; /* gray-900 */
+      }
+      .template-elegant .total-due-label,
+      .template-elegant .total-due-amount {
+          color: #111827; /* gray-900 */
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "dexie": "https://aistudiocdn.com/dexie@^4.2.1",
+    "jspdf": "https://aistudiocdn.com/jspdf@^3.0.4"
+  }
+}
+</script>
+</head>
+  <body class="bg-gray-100 dark:bg-gray-900">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

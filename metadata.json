@@ -1,0 +1,5 @@
+{
+  "name": "GaweInvoice",
+  "description": "An invoice management application that allows users to create, view, edit, and delete invoices. All data is stored locally in your browser using Dexie.js (IndexedDB).",
+  "requestFramePermissions": []
+}

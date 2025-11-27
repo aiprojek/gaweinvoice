@@ -1,0 +1,16 @@
+{
+  "name": "GaweInvoice",
+  "short_name": "GaweInvoice",
+  "description": "An invoice management application that allows users to create, view, edit, and delete invoices.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4f46e5",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

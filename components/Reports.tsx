@@ -1,11 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import type { Invoice, Client, Product, Settings } from '../types';
 import { InvoiceStatus } from '../types';
 import { formatCurrency } from '../utils/formatting';
 import { useI18n } from '../contexts/I18nContext';
+import { getAllInvoices } from '../services/db';
 
 interface ReportsProps {
-  invoices: Invoice[];
   clients: Client[];
   products: Product[];
   settings: Settings | null;
@@ -13,12 +13,24 @@ interface ReportsProps {
 
 type ReportType = 'profit_loss' | 'sales_by_client' | 'sales_by_product' | 'tax';
 
-const Reports: React.FC<ReportsProps> = ({ invoices, clients, products, settings }) => {
+const Reports: React.FC<ReportsProps> = ({ clients, products, settings }) => {
     const { t, language } = useI18n();
+    const [invoices, setInvoices] = useState<Invoice[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [reportType, setReportType] = useState<ReportType>('profit_loss');
     const [dateRange, setDateRange] = useState('this_year');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+
+    useEffect(() => {
+        const fetchInvoices = async () => {
+            setIsLoading(true);
+            const data = await getAllInvoices();
+            setInvoices(data);
+            setIsLoading(false);
+        };
+        fetchInvoices();
+    }, []);
 
     const today = new Date();
     const currentYear = today.getFullYear();
@@ -183,11 +195,15 @@ const Reports: React.FC<ReportsProps> = ({ invoices, clients, products, settings
         </div>
     );
     
+    if (isLoading) {
+        return <div className="text-center p-8">{t('loadingData')}</div>;
+    }
+
     return (
         <div className="bg-white shadow-lg rounded-xl p-4 sm:p-6 lg:p-8 space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h2 className="text-2xl font-bold text-gray-800">{t('reports')}</h2>
-                 <button onClick={handleExport} disabled={!reportData} className="px-4 py-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-2">
+                 <button onClick={handleExport} disabled={!reportData || !reportData.details || reportData.details.length === 0} className="px-4 py-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-2">
                     <i className="bi bi-file-earmark-spreadsheet-fill"></i> {t('exportCSV')}
                 </button>
             </div>
@@ -246,20 +262,24 @@ const Reports: React.FC<ReportsProps> = ({ invoices, clients, products, settings
                     )}
                     <section aria-labelledby="report-details-heading">
                         <h3 id="report-details-heading" className="sr-only">Report Details</h3>
-                        <div className="overflow-x-auto border rounded-lg">
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                    <tr>{Object.keys(reportData.details[0]).map(header => <th key={header} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{header}</th>)}</tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                    {reportData.details.map((row, i) => (
-                                        <tr key={i} className="hover:bg-gray-50">
-                                            {Object.values(row).map((cell, j) => <td key={j} className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{cell as any}</td>)}
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                        {reportData.details && reportData.details.length > 0 ? (
+                            <div className="overflow-x-auto border rounded-lg">
+                                <table className="min-w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50">
+                                        <tr>{Object.keys(reportData.details[0]).map(header => <th key={header} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{header}</th>)}</tr>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-200">
+                                        {reportData.details.map((row, i) => (
+                                            <tr key={i} className="hover:bg-gray-50">
+                                                {Object.values(row).map((cell, j) => <td key={j} className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{cell as any}</td>)}
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        ) : (
+                            <div className="text-center py-10 text-gray-500 border rounded-lg">{t('noDataForReport')}</div>
+                        )}
                     </section>
                 </div>
             )}

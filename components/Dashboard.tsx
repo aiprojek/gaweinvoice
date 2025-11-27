@@ -1,11 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import type { Invoice, Client, Settings } from '../types';
 import { InvoiceStatus } from '../types';
 import { formatCurrency } from '../utils/formatting';
 import { useI18n } from '../contexts/I18nContext';
+import { getAllInvoices } from '../services/db';
 
 interface DashboardProps {
-  invoices: Invoice[];
   clients: Client[];
   settings: Settings | null;
 }
@@ -92,10 +92,22 @@ const StatusPieChart: React.FC<{ data: { name: InvoiceStatus, count: number }[] 
 };
 
 
-const Dashboard: React.FC<DashboardProps> = ({ invoices, clients, settings }) => {
+const Dashboard: React.FC<DashboardProps> = ({ clients, settings }) => {
   const { t } = useI18n();
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [dateRange, setDateRange] = useState('this_year');
   const [selectedClient, setSelectedClient] = useState('all');
+
+  useEffect(() => {
+    const fetchInvoices = async () => {
+        setIsLoading(true);
+        const data = await getAllInvoices();
+        setInvoices(data);
+        setIsLoading(false);
+    };
+    fetchInvoices();
+  }, []);
 
   const filteredInvoices = useMemo(() => {
     let result = invoices;
@@ -158,7 +170,9 @@ const Dashboard: React.FC<DashboardProps> = ({ invoices, clients, settings }) =>
     filteredInvoices
       .forEach(inv => { 
           if (inv.amountPaid > 0 && inv.total > 0) {
+              // FIX: Use loop variable 'inv' instead of 'invoice'
               const profitRatio = inv.netProfit / inv.total;
+              // FIX: Use loop variable 'inv' instead of 'invoice'
               const realizedProfit = inv.amountPaid * profitRatio;
               clientsData[inv.toName] = (clientsData[inv.toName] || 0) + realizedProfit; 
           }
@@ -171,7 +185,9 @@ const Dashboard: React.FC<DashboardProps> = ({ invoices, clients, settings }) =>
     filteredInvoices.forEach(inv => {
         if (inv.amountPaid > 0 && inv.total > 0) {
             const month = new Date(inv.invoiceDate).getMonth();
+            // FIX: Use loop variable 'inv' instead of 'invoice'
             const profitRatio = inv.netProfit / inv.total;
+            // FIX: Use loop variable 'inv' instead of 'invoice'
             const realizedProfit = inv.amountPaid * profitRatio;
             months[month] += realizedProfit;
         }
@@ -191,6 +207,10 @@ const Dashboard: React.FC<DashboardProps> = ({ invoices, clients, settings }) =>
       </div>
     </div>
   );
+
+  if (isLoading) {
+      return <div className="text-center p-8">{t('loadingData')}</div>;
+  }
 
   return (
     <div className="space-y-8">
